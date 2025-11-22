@@ -1,33 +1,809 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <title>Siege Tracker</title>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Somsubro Banerjee | DevSecOps Engineer & Rust Developer</title>
+    <style>
+        :root {
+            --color-bg: #0a0a0a;
+            --color-surface: #111111;
+            --color-surface-elevated: #1a1a1a;
+            --color-text: #e4e4e4;
+            --color-text-secondary: #a0a0a0;
+            --color-accent: #32b8c6;
+            --color-accent-hover: #29a4b0;
+            --color-border: rgba(255, 255, 255, 0.1);
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            --font-mono: 'Courier New', monospace;
+        }
 
-  <!-- Bootstrap CSS from a CDN. This way you don't have to include the bootstrap file yourself -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <!-- Your own stylesheet -->
-  <link rel="stylesheet" type="text/css" href="style.css">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            font-family: var(--font-mono);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-accent);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--color-accent) 0%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s backwards;
+        }
+
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--color-surface-elevated);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            color: var(--color-text);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .social-btn:hover {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            transform: translateY(-2px);
+        }
+
+        .section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: var(--color-accent);
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .about-text {
+            font-size: 1.1rem;
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--color-surface-elevated);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .skill-category {
+            background: var(--color-surface-elevated);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+        }
+
+        .skill-category h3 {
+            color: var(--color-accent);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .skill-tag {
+            padding: 0.5rem 1rem;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: var(--color-surface-elevated);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(50, 184, 198, 0.2);
+        }
+
+        .project-header {
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(50, 184, 198, 0.1) 0%, rgba(50, 184, 198, 0.05) 100%);
+        }
+
+        .project-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-text);
+        }
+
+        .project-description {
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .project-tech {
+            padding: 1.5rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-badge {
+            padding: 0.3rem 0.8rem;
+            background: var(--color-surface);
+            border: 1px solid var(--color-accent);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--color-accent);
+        }
+
+        .project-links {
+            padding: 0 2rem 2rem 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .project-link {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            color: var(--color-text);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .project-link:hover {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+        }
+
+        .contact-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-text {
+            font-size: 1.2rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .contact-email {
+            display: inline-block;
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            padding: 1rem 2rem;
+            border: 2px solid var(--color-accent);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .contact-email:hover {
+            background: var(--color-accent);
+            color: var(--color-bg);
+        }
+
+        .footer {
+            background: var(--color-surface);
+            border-top: 1px solid var(--color-border);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-text {
+            color: var(--color-text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--color-surface);
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <div class="container d-flex align-items-center h-100">
-    <div class="row">
-      <header class="text-center col-12">
-        <h1 class="text-uppercase"><strong>Rainbow Six Siege Stats Tracker</strong></h1>
-      </header>
-  <div class="buffer col-12"></div>
-  <section class="text-center col-12">
-    <hr>
-    <button class="btn btn-primary b-xl">Track Now!</button>
-  </section>
-</div> 
-</div>
-</body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">&lt;S/&gt;</div>
+            <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
 
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Somsubro Banerjee</h1>
+            <p class="hero-subtitle">DevSecOps Engineer | Rust Developer | Cloud Architect</p>
+            <p class="hero-description">
+                Building robust Azure SAAS and PAAS libraries in Rust. Specializing in backend microservices, 
+                automation, and cloud infrastructure with 3+ years of industry experience.
+            </p>
+            <div class="social-links">
+                <a href="https://github.com/somsubrob" class="social-btn" target="_blank" rel="noopener noreferrer">
+                    GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/somsubro-b/" class="social-btn" target="_blank" rel="noopener noreferrer">
+                    LinkedIn
+                </a>
+                <a href="https://stackoverflow.com/users/oddlyghost" class="social-btn" target="_blank" rel="noopener noreferrer">
+                    Stack Overflow
+                </a>
+                <a href="https://twitter.com/@SomsubroB" class="social-btn" target="_blank" rel="noopener noreferrer">
+                    Twitter
+                </a>
+                <a href="mailto:somsubrob@gmail.com" class="social-btn">
+                    Email Me
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <h2 class="section-title">About Me</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>
+                    I'm a passionate DevSecOps engineer with a strong focus on building scalable, 
+                    secure backend systems. With 3+ years of experience, I specialize in designing 
+                    microservices architectures using Rust and automating cloud infrastructure on Azure.
+                </p>
+                <p>
+                    Currently, I'm developing comprehensive Rust libraries to simplify interactions 
+                    with Azure SAAS and PAAS services, making cloud development more accessible and efficient.
+                </p>
+                <p>
+                    When I'm not coding, you'll find me exploring new technologies, contributing to 
+                    open-source projects, or sharing my knowledge through technical writing and mentoring.
+                </p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">3+</div>
+                    <div class="stat-label">Years Experience</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Projects Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">Technologies</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Rust Love</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="section">
+        <h2 class="section-title">Technical Skills</h2>
+        <div class="skills-grid">
+            <div class="skill-category">
+                <h3>Backend & Systems</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">Rust</span>
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">C/C++</span>
+                    <span class="skill-tag">Java</span>
+                    <span class="skill-tag">Node.js</span>
+                    <span class="skill-tag">GraphQL</span>
+                    <span class="skill-tag">REST APIs</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <h3>Frontend</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">Vite</span>
+                    <span class="skill-tag">TypeScript</span>
+                    <span class="skill-tag">Flutter</span>
+                    <span class="skill-tag">Next.js</span>
+                    <span class="skill-tag">Tailwind CSS</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <h3>Cloud & DevOps</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">Azure</span>
+                    <span class="skill-tag">Docker</span>
+                    <span class="skill-tag">Kubernetes</span>
+                    <span class="skill-tag">Terraform</span>
+                    <span class="skill-tag">Ansible</span>
+                    <span class="skill-tag">CI/CD</span>
+                    <span class="skill-tag">Azure DevOps</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <h3>Databases</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">PostgreSQL</span>
+                    <span class="skill-tag">MySQL</span>
+                    <span class="skill-tag">MongoDB</span>
+                    <span class="skill-tag">Redis</span>
+                    <span class="skill-tag">InfluxDB</span>
+                    <span class="skill-tag">Neo4j</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <h3>Monitoring & Security</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">Prometheus</span>
+                    <span class="skill-tag">Grafana</span>
+                    <span class="skill-tag">ELK Stack</span>
+                    <span class="skill-tag">Splunk</span>
+                    <span class="skill-tag">SonarQube</span>
+                </div>
+            </div>
+            <div class="skill-category">
+                <h3>Tools & Others</h3>
+                <div class="skill-tags">
+                    <span class="skill-tag">Git</span>
+                    <span class="skill-tag">Linux</span>
+                    <span class="skill-tag">PowerShell</span>
+                    <span class="skill-tag">Bash</span>
+                    <span class="skill-tag">Jira</span>
+                    <span class="skill-tag">Figma</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="section">
+        <h2 class="section-title">Featured Projects</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">Azure Rust SDK</h3>
+                    <p class="project-description">
+                        Comprehensive Rust libraries for Azure SAAS and PAAS services, providing 
+                        type-safe abstractions and ergonomic APIs for cloud development.
+                    </p>
+                </div>
+                <div class="project-tech">
+                    <span class="tech-badge">Rust</span>
+                    <span class="tech-badge">Azure</span>
+                    <span class="tech-badge">REST API</span>
+                    <span class="tech-badge">Async</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="project-link">View Code</a>
+                    <a href="#" class="project-link">Documentation</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">Microservices Platform</h3>
+                    <p class="project-description">
+                        Scalable microservices architecture with service discovery, load balancing, 
+                        and distributed tracing built entirely in Rust.
+                    </p>
+                </div>
+                <div class="project-tech">
+                    <span class="tech-badge">Rust</span>
+                    <span class="tech-badge">Docker</span>
+                    <span class="tech-badge">Kubernetes</span>
+                    <span class="tech-badge">gRPC</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="project-link">View Code</a>
+                    <a href="#" class="project-link">Live Demo</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">Infrastructure Automation</h3>
+                    <p class="project-description">
+                        Complete infrastructure-as-code solution for Azure using Terraform with 
+                        automated provisioning, monitoring, and cost optimization.
+                    </p>
+                </div>
+                <div class="project-tech">
+                    <span class="tech-badge">Terraform</span>
+                    <span class="tech-badge">Azure</span>
+                    <span class="tech-badge">Python</span>
+                    <span class="tech-badge">PowerShell</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="project-link">View Code</a>
+                    <a href="#" class="project-link">Documentation</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">Real-time Dashboard</h3>
+                    <p class="project-description">
+                        Modern web dashboard built with React and Vite, featuring real-time data 
+                        visualization, analytics, and responsive design.
+                    </p>
+                </div>
+                <div class="project-tech">
+                    <span class="tech-badge">React</span>
+                    <span class="tech-badge">Vite</span>
+                    <span class="tech-badge">TypeScript</span>
+                    <span class="tech-badge">WebSocket</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="project-link">View Code</a>
+                    <a href="#" class="project-link">Live Demo</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">CI/CD Pipeline Suite</h3>
+                    <p class="project-description">
+                        Enterprise-grade CI/CD pipelines with automated testing, security scanning, 
+                        and multi-environment deployment strategies.
+                    </p>
+                </div>
+                <div class="project-tech">
+                    <span class="tech-badge">Azure DevOps</span>
+                    <span class="tech-badge">Docker</span>
+                    <span class="tech-badge">SonarQube</span>
+                    <span class="tech-badge">Ansible</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="project-link">View Code</a>
+                    <a href="#" class="project-link">Documentation</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 class="project-title">Flutter Mobile App</h3>
+                    <p class="project-description">
+                        Cross-platform mobile application with native performance, offline support, 
+                        and seamless backend integration.
+                    </p>
+                </div>
+                <div class="project-tech">
+                    <span class="tech-badge">Flutter</span>
+                    <span class="tech-badge">Dart</span>
+                    <span class="tech-badge">Firebase</span>
+                    <span class="tech-badge">REST API</span>
+                </div>
+                <div class="project-links">
+                    <a href="#" class="project-link">View Code</a>
+                    <a href="#" class="project-link">App Store</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section">
+        <h2 class="section-title">Get In Touch</h2>
+        <div class="contact-content">
+            <p class="contact-text">
+                I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision. 
+                Feel free to reach out!
+            </p>
+            <a href="mailto:somsubrob@gmail.com" class="contact-email">somsubrob@gmail.com</a>
+            <div class="social-links">
+                <a href="https://github.com/somsubrob" class="social-btn" target="_blank" rel="noopener noreferrer">
+                    GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/somsubro-b/" class="social-btn" target="_blank" rel="noopener noreferrer">
+                    LinkedIn
+                </a>
+                <a href="https://behance.net/somsubrbanerje" class="social-btn" target="_blank" rel="noopener noreferrer">
+                    Behance
+                </a>
+                <a href="https://www.buymeacoffee.com/oddlyGhost" class="social-btn" target="_blank" rel="noopener noreferrer">
+                    Buy Me A Coffee
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                &copy; 2025 Somsubro Banerjee. Built with ❤️ using HTML, CSS, and JavaScript.
+            </p>
+            <p class="footer-text">
+                "I like to write everything in Rust" 🦀
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const navHeight = document.querySelector('.navbar').offsetHeight;
+                    const targetPosition = target.offsetTop - navHeight;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    // Close mobile menu if open
+                    document.querySelector('.nav-links').classList.remove('active');
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Active navigation link highlight
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.style.color = '';
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.style.color = 'var(--color-accent)';
+                }
+            });
+        });
+
+        // Add scroll animation to sections
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.project-card, .skill-category, .stat-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
 </html>
